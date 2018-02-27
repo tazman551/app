@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Upload Files</title>
+	<link rel="stylesheet" href="formupload.css">
+	<script src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+	<script src= "./formupload.js"></script>
+  </head>
+  
+  <body>
+  <main>
+	<div id='form'>
+		<h1>Uplaod File(s) To The Server</h1>
+	<!-- ./fileupload -->
+			<form id="formupload" action='' method='post' enctype="multipart/form-data">
+				<input type="file" name="ftu"  multiple><br>
+				<button id="send" >Send File(s)!</button>
+			</form>
+			<div id='from_data_res'>
+			
+			</div>
+		</div>
+		<div id="list_content">
+			<dir id='filenames'>
+			
+			</dir>
+		</dir>
+	</main>
+  </body>
+</html>
+
+
+
+
+
