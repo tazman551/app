@@ -26,30 +26,35 @@ $( document ).ready(function() {
 				$("#from_data_res").empty();
                 $("#from_data_res").append('Data Successful Sent!');
 				
-				// loads new files that were added with the upload (same as below request)
-					$.ajax({
-						type: 'GET',
-						url:'/logs',
-						success: function(data){
-							console.log("Got the data", data);
-							$("#filenames").empty();
-							var size = data.length;
-							data.forEach(function(e){
-								$("#filenames").append(e);
-								$("#filenames").append('<button class=\'delete\' id='+e+'>Delete</button>');
-								$("#filenames").append('<br>');
-								$("#filenames").append('<br>');
-							});
-			
-						},
-						error: function(){
-							// error message to the div if there was a problem
-							$("#list_content").empty();
-							$("#list_content").append('Error, Data not received!');
-						}
-					});
-					
-            },
+				// periodically checks for new uploaded files
+				// gets filenames from the server and displays them
+				$.ajax({
+					// request to node server
+					type: 'GET',
+					// string the node server with use to id request actions 
+					url:'/logs',
+					// if successful in getting filenames from ajax and server
+					success: function(data){
+						console.log("Got the data", data);
+						// empty div so some files do not repeat
+						$("#filenames").empty();
+						var size = data.length;
+						// displays each file name with a delete button 
+						data.forEach(function(e){
+							$("#filenames").append(e);
+							$("#filenames").append('<button class=\'delete\' id='+e+'>Delete</button>');
+							$("#filenames").append('<br>');
+							$("#filenames").append('<br>');
+						});
+					},
+					error: function(){
+						// error message to the div if there was a problem
+						$("#list_content").empty();
+						$("#list_content").append('Error, Data not received!');
+					}
+				});
+				
+			},
 			error: function(){
 				// message for error on upload
 				$("#from_data_res").empty();
@@ -57,7 +62,7 @@ $( document ).ready(function() {
 			}
 			
         });
-		
+		$('#formupload')[0].reset();
 	});
 	
 	
@@ -95,25 +100,38 @@ $( document ).ready(function() {
 	//delete button, to delete files on the server
 
 	$(document).on('click', ".delete", function() {
-		console.log('clicked');
-		var data = {'filename':$('.delete').attr('id')};
-		console.log(data);
-		
 		$.ajax({
 		// request to node server
-		type: 'POST',
+		type: 'get',
 		// string the node server with use to id request actions 
 		url:'/delete',
-		data: data,
-		contentType: 'text/plain',
+		data: {
+			
+			filename: $(this).attr('id')
+		},
 		// if successful in getting filenames from ajax and server
 		success: function(data){
-			console.log(data);
 			
+			console.log("Got the data", data);
+			// empty div so some files do not repeat
+			$("#filenames").empty();
+			var size = data.length;
+			// displays each file name with a delete button 
+			data.forEach(function(e){
+				$("#filenames").append(e);
+				$("#filenames").append('<button class=\'delete\' id='+e+'>Delete</button>');
+				$("#filenames").append('<br>');
+				$("#filenames").append('<br>');
+			});
+			
+			
+			$("#msg").empty();
+            $("#msg").append('Success, Data Deleted!');
 		},
-		error: function(){
+		error: function(error){
 			// error message to the div if there was a problem
 			$("#list_content").empty();
+			console.log(error);
             $("#list_content").append('Error, Data not Deleted!');
 		}
 	});

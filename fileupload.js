@@ -6,6 +6,7 @@ var fs = require('fs');
 var express = require('express')
 var app = express()
 var fileUpload = require('express-fileupload');
+const util = require('util');
 
 
 app.use(fileUpload());
@@ -43,16 +44,26 @@ app.post('/', function(req, res) {
 			fn = file.name;
 			file.mv("./node_storage/" + fn);
 		}
+		
+		
 		res.end();
 	}
 });
 
 
-app.post('/delete', function(req, res){
+app.get('/delete', function(req, res){
 	console.log();
 	console.log('Got delete req');
-	console.log('Deleting: ' + req)
+	console.log(util.inspect(req.query.filename));
 	
+	var filepath = './node_storage/' + req.query.filename ;
+	
+	fs.unlinkSync(filepath);
+	
+	// send updated list of filenames
+	var fn = fs.readdirSync('node_storage');
+	
+	res.send(fn);
 	res.end();
 });
 

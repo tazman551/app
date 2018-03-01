@@ -37,6 +37,7 @@ main{
 }
 
 #list_content{
+	color:white;
 	float:right;
 	background-color: black;
 	padding:10px;
