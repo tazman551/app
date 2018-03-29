@@ -41,3 +41,9 @@ core_id int,
 foreign key(user_id) REFERENCES user(user_id)
 foreign key(core_id) REFERENCES core_schedule(core_id)
 );
+
+//uml in yuml
+
+[User|user_id:int(pk);first_name:VARCHAR(50);last_name:VARCHAR(50);pathway:char(1);core_id:int(fk);]++1-1>[core_schedule|core_id:int(pk);date_modified:date;monday:VARCHAR(48);tuesday:VARCHAR(48);wednesday:VARCHAR(48);thrusday:VARCHAR(48);friday:VARCHAR(48);],[User]++1--++0..*[week_schedule|week_schedule_id:int(pk);date_in_use:date;monday:VARCHAR(48);tuesday:VARCHAR(48);wednesday:VARCHAR(48);thrusday:VARCHAR(48);friday:VARCHAR(48);],[User]++1--++0..*[temp_schedule|
+temp_schedule_id:int(pk);user_id:int;core_id:int;]
+
