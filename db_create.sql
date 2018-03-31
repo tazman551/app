@@ -4,6 +4,7 @@ create database tpp_schedule;
 
 use tpp_schedule;
 
+
 create table core_schedule(
 core_id int Auto_increment not null unique primary key,
 date_modified date not null,
@@ -13,6 +14,8 @@ wednesday VARCHAR(48),
 thrusday VARCHAR(48),
 friday VARCHAR(48)
 );
+
+INSERT into paraticipants (first_name, last_name, pathway) values ([data],[data],[data]);
 
 create table paraticipants(
 user_id int Auto_increment not null unique primary key,
