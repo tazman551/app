@@ -45,6 +45,8 @@ foreign key(user_id) REFERENCES user(user_id)
 foreign key(core_id) REFERENCES core_schedule(core_id)
 );
 
+create table commitment();
+
 create table core();
 
 create table tech();
