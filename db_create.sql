@@ -16,7 +16,7 @@ friday VARCHAR(48)
 );
 
 
-create table paraticipants(
+create table participants(
 user_id int Auto_increment not null unique primary key,
 first_name VARCHAR(50) not null,
 last_name VARCHAR(50) not null,
@@ -40,7 +40,7 @@ create table temp_schedule(
 temp_schedule_id int Auto_increment not null unique primary key,
 user_id int,
 core_id int,
-foreign key(user_id) REFERENCES paraticipants(user_id),
+foreign key(user_id) REFERENCES participants(user_id),
 foreign key(core_id) REFERENCES core_schedule(core_id)
 );
 
@@ -51,8 +51,26 @@ start_time time,
 end_time time,
 credits int,
 user_id int,
-foreign key(user_id) REFERENCES paraticipants(user_id)
+foreign key(user_id) REFERENCES participants(user_id)
 );
+
+DELIMITER $$
+CREATE TRIGGER `default_date` BEFORE INSERT ON core_schedule FOR EACH ROW
+if ( isnull(new.date_modified) ) then
+ set new.date_modified=curdate();
+end if;
+$$
+delimiter ;
+
+
+DELIMITER //
+create trigger add_core_to_new_par after insert on participants
+for each row
+begin
+	insert into core_schedule value();
+    SET NEW.core_id = 1;
+end;//
+DELIMITER ;
 
 create table core();
 
