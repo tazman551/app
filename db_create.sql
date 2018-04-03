@@ -15,7 +15,6 @@ thrusday VARCHAR(48),
 friday VARCHAR(48)
 );
 
-INSERT into paraticipants (first_name, last_name, pathway) values ([data],[data],[data]);
 
 create table paraticipants(
 user_id int Auto_increment not null unique primary key,
@@ -41,11 +40,19 @@ create table temp_schedule(
 temp_schedule_id int Auto_increment not null unique primary key,
 user_id int,
 core_id int,
-foreign key(user_id) REFERENCES user(user_id)
+foreign key(user_id) REFERENCES paraticipants(user_id),
 foreign key(core_id) REFERENCES core_schedule(core_id)
 );
 
-create table commitment();
+create table commitment(
+commitment int Auto_increment not null unique primary key,
+title text,
+start_time time,
+end_time time,
+credits int,
+user_id int,
+foreign key(user_id) REFERENCES paraticipants(user_id)
+);
 
 create table core();
 
