@@ -5,8 +5,8 @@ create database tpp_schedule;
 use tpp_schedule;
 
 
-create table core_schedule(
-core_id int Auto_increment not null unique primary key,
+create table main_schedule(
+main_id int Auto_increment not null unique primary key,
 date_modified date not null,
 monday VARCHAR(48),
 tuesday VARCHAR(48),
