@@ -21,6 +21,8 @@ user_id int Auto_increment not null unique primary key,
 first_name VARCHAR(50) not null,
 last_name VARCHAR(50) not null,
 pathway char(1),
+status varchar(20),
+program varchar(20)
 core_id int,
 foreign key(core_id) REFERENCES core_schedule(core_id)
 );
@@ -49,7 +51,9 @@ commitment int Auto_increment not null unique primary key,
 title text,
 start_time time,
 end_time time,
+days , 
 credits int,
+f-2-f,
 user_id int,
 foreign key(user_id) REFERENCES participants(user_id)
 );
