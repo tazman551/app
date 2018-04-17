@@ -1,0 +1,119 @@
+/*
+	var sql = new SQLConnect();
+	var array = ["first_name", "last_name", "data_created"]
+	var table = "users"
+	var fullSQL;
+	fullSQL= sql.sqlSelectTable(array, table).then(data =>{
+		console.log(data);
+		res.send(data);
+		res.end();
+	}).catch(error => {
+		console.error(error);
+		res.end();
+	}); 
+	*/
+	var sql = new SQLConnect();
+	var array = Object.keys(json)
+	var array2 =Object.values(json)
+	var table = "users"
+	
+	var insertSQL;
+	insertSQL= sql.sqlInsertTable(array, array2, table).then(data =>{
+		console.log(data);
+		res.end();
+	}).catch(error => {
+		console.error(error);
+		res.end();
+	}); 
+	
+});
+
+// starts the server listening on port 8080 localhost
+var server = app.listen(8080, function () {
+
+    var host = server.address().address
+    var port = server.address().port
+
+    console.log('Express app listening at http://%s:%s', host, port)
+
+});
+
+
+
+
+
+class SQLConnect{
+	
+	constructor() {
+	}
+
+	sqlSelectTable(arrayOfFields, tableName){
+		var sql;
+		if(arrayOfFields.length < 1){
+			console.log("cant have empty fields");
+			return null;
+		}
+		sql = "select ";
+		// formating statement to syantx
+		for(var i = 0; i<arrayOfFields.length;i++){
+			if(i == arrayOfFields.length-1)
+			{
+				sql = sql + arrayOfFields[i]+ " ";
+				break;
+			}
+			sql = sql + arrayOfFields[i] + ", ";
+		}
+		sql = sql + "from " + tableName + ";"
+		
+		var data = connection.query(sql)
+			.then(data => {
+				return data;
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		return data;
+	}
+	
+	sqlInsertTable(arrayOfFields, arrayOfValues, tableName){
+		var sql;
+		if(arrayOfFields.length < 1|| arrayOfValues <1){
+			console.log("cant have empty arrays");
+			return null;
+		}
+		sql = "insert into " + tableName+"(";	
+		for(var i = 0; i<arrayOfFields.length;i++){
+			if(i == arrayOfFields.length-1)
+			{
+				sql = sql + arrayOfFields[i]+ ") values (";
+				break;
+			}
+			sql = sql + arrayOfFields[i] + ", ";
+		}
+		for(var i = 0; i<arrayOfValues.length;i++){
+			if(i == arrayOfValues.length-1)
+			{
+				sql = sql + arrayOfValues[i]+ ");";
+				break;
+			}
+			if(i == 2){
+				sql = sql + arrayOfValues[i]+ ", "
+			}
+			else{
+				sql = sql + "'"+arrayOfValues[i]+"'" + ", ";
+			}
+		}
+		console.log(sql);
+		var data = connection.execute(sql)
+			.then(data => {
+				return data;
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		return data;
+	}
+
+}
+
+// Access Database connection
