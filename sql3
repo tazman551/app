@@ -1,0 +1,256 @@
+var express = require('express')
+const ADODB = require('node-adodb');
+const connection = ADODB.open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\ZKUG24A\\Documents\\My Deliveries\\8Week\\database_connection\\Schedule.accdb;');
+var app = express()
+
+app.use(express.static('www'));
+
+
+app.get('/', function(req, res) {
+	console.log();
+	console.log('ajax is connecting');
+	
+	
+	res.end();
+});	
+	
+app.get("/insert",function(req,res){	
+	
+	
+	var sql = new SQLConnect(connection);
+	var json = { monday:"1212",tuesday:"000011111222",wednesday:"-1-1-1222323244",thursday:"",friday:""};
+	var table = "main_schedule"
+	
+	
+	var result = sql.sqlInsertTable(json, table);
+	console.log(result);
+	console.log();
+	var rs = sql.sendExecute(result).then(data => {
+		console.log(data);
+		console.log();
+		res.send(data);
+		res.end();
+		}).catch(error => {
+			console.error(error);
+			res.end();
+		});
+	
+});
+
+app.get("/query/:word",function(req,res){	
+	
+	var sql = new SQLConnect(connection);
+	var id = req.params;
+	console.log(id);
+	var switchWord = id.word;
+	
+	var result = sql.generateQuery(switchWord,id);
+	console.log(result);
+	var rs = sql.sendQuery(result).then(data => {
+		console.log(data);
+		console.log();
+		res.send(data);
+		}).catch(error => {
+			console.error(error);
+			res.end();
+		});
+	
+});
+
+app.get("/query/:word/:user_id",function(req,res){	
+	
+	
+	var id = req.params;
+	console.log(id);
+	
+	var sql = new SQLConnect(connection);
+	var switchWord = id.word;
+	var rs = [];
+	sql.sendQuery(sql.generateQuery(switchWord,id)[0]).then(data => {
+		console.log(data);
+		rs.push(data);
+		}).catch(error => {
+			console.error(error);
+		});
+	sql.sendQuery(sql.generateQuery(switchWord,id)[1]).then(data => {
+		console.log(data);
+		console.log();
+		rs.push(data);
+		sql.sendMultipleJson(res, rs);
+		}).catch(error => {
+			console.error(error);
+			res.end();
+		});
+		
+		
+});
+
+// starts the server listening on port 8080 localhost
+var server = app.listen(8080, function () {
+
+    var host = server.address().address
+    var port = server.address().port
+
+    console.log('Express app listening at http://%s:%s', host, port)
+
+});
+
+
+
+
+
+class SQLConnect{
+	
+	constructor(connection) {
+		this.connection =connection;
+	}
+	
+	sendMultipleJson(res, rs){
+			res.send(rs);	
+	}
+	
+	sendQuery(statement){
+		var data =connection.query(statement).then(data => {
+			console.log("success");
+			return data;
+		}).catch(error => {
+			console.error(error);
+		});
+		return data;
+	}
+	
+	sendExecute(statement){
+		var data = connection.execute(statement).then(data => {
+			console.log("success");
+			return data;
+		}).catch(error => {
+			console.error(error);
+		});
+		return data;
+	}
+	
+	//not complete
+	generateQuery(word,id){
+		var statement;
+		switch(word){
+			case "users":
+				statement = "select * from users;";
+				break;
+			case "user":
+				statement = ["select * from users,main_schedule where  users.user_id ="+id.user_id,"select * from commitments where  commitments.user_id ="+id.user_id];
+				break;
+		}
+		
+		return statement;
+	}
+	
+	sqlInsertTable(jsonObj, tableName){
+		
+		switch(tableName){
+			case "users":
+				var data = this.userdata(jsonObj);
+				return data;
+				break;
+			case "commitments":
+				var data = this.commitmentsdata(jsonObj);
+				return data;
+				break;
+			case "main_schedule":
+				var data = this.mainScheduledata(jsonObj);
+				return data;
+				break;
+			
+			
+		}
+		//other stuff
+	}
+	
+	userdata(Json){
+		// Json format 
+		//first_name: "" , last_name: "", pathway:true/false,status:"",program:"",main_id:#
+		var arrayColumns = Object.keys(Json);
+		var arrayValues = Object.values(Json);
+		var statement = "insert into users ("
+		for(var i = 0; i<arrayColumns.length;i++){
+			if(i == arrayColumns.length-1)
+			{
+				statement +=arrayColumns[i]+ ") values (";
+				break;
+			}
+			statement += arrayColumns[i] + ", ";
+		}
+		for(var i = 0; i<arrayValues.length;i++){
+			switch(i){
+				case arrayValues.length-1:
+					statement += arrayValues[i]+ ");";
+					break;
+				case 2:
+					statement+= arrayValues[i]+ ", "
+					break;
+				default:
+					statement+= "'"+arrayValues[i]+"'" + ", ";
+					break;
+			}
+		}
+		return statement;
+	}
+	
+	commitmentsdata(Json){
+		// Json format 
+		// title:"class",start_time:"8:00AM",end_time:"8:50AM",day:"TR",credits:#,user_id:#
+		var arrayColumns = Object.keys(Json);
+		var arrayValues = Object.values(Json);
+		var statement = "insert into commitments ("
+		for(var i = 0; i<arrayColumns.length;i++){
+			if(i == arrayColumns.length-1)
+			{
+				statement +=arrayColumns[i]+ ") values (";
+				break;
+			}
+			statement += arrayColumns[i] + ", ";
+		}
+		for(var i = 0; i<arrayValues.length;i++){
+			switch(i){
+				case arrayValues.length-1:
+					statement += arrayValues[i]+ ");";
+					break;
+				case arrayValues.length-2:
+					statement+= arrayValues[i]+ ", "
+					break;
+				default:
+					statement+= "'"+arrayValues[i]+"'" + ", ";
+					break;
+			}
+		}
+		return statement;
+	}
+	
+	mainScheduledata(Json){
+		// Json format 
+		// monday:"########",tuesday:"######",wednesday:"#####",thursday:"######",friday:"######"
+		var arrayColumns = Object.keys(Json);
+		var arrayValues = Object.values(Json);
+		var statement = "insert into main_schedule ("
+		for(var i = 0; i<arrayColumns.length;i++){
+			if(i == arrayColumns.length-1)
+			{
+				statement +=arrayColumns[i]+ ") values (";
+				break;
+			}
+			statement += arrayColumns[i] + ", ";
+		}
+		for(var i = 0; i<arrayValues.length;i++){
+			switch(i){
+				case arrayValues.length-1:
+					statement += "'" +arrayValues[i]+"'" +");";
+					break;
+				default:
+					statement+= "'"+arrayValues[i]+"'" + ", ";
+					break;
+			}
+		}
+		return statement;
+	}
+
+	
+}
