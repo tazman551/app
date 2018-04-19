@@ -95,7 +95,28 @@ class SQLConnect{
 		return data;
 	}
 	
+	//not complete
 	generateQuery(Json){
+		// fields:[],tables :[],wheres:[]
+		var fields = Json.fields;
+		var tables = Json.tables;
+		var wheres = Json.wheres;
+		var statement = "select ";
+		//fields
+		for(var i=0; i<fields.length; i++){
+			if(i == fields.length-1){
+				statement += fields[i] + "\n from";
+				break;
+			}
+			statement += fields[i] + ",";
+		}
+		for(var i=0; i<tables.length; i++){
+			if(i == tables.length-1){
+				statement += tables[i] + "\n ";
+				break;
+			}
+			statement += tabl[i] + ",";
+		}
 		
 		
 	}
