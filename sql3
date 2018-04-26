@@ -1,6 +1,6 @@
 var express = require('express')
 const ADODB = require('node-adodb');
-const connection = ADODB.open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\ZKUG24A\\Documents\\My Deliveries\\8Week\\database_connection\\Schedule.accdb;');
+const connection = ADODB.open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\/Jerry\\Documents\\My Deliveries\\8Week\\database_connection\\Schedule.accdb;');
 var app = express()
 
 app.use(express.static('www'));
